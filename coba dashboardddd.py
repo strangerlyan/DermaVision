@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
-
+import tensorflow as tf
 from PIL import Image
 
 from tensorflow.keras.applications.efficientnet import preprocess_input
@@ -366,7 +366,28 @@ def render_detection_tab(model, class_names, meta_cols):
             
             # ============ PREDIKSI ============
             with st.spinner("🔄 Menganalisis gambar menggunakan CNN..."):
-                pred = model.predict([img_array, meta], verbose=0)
+                input_img = np.array(img_array, dtype=np.float32)
+                input_meta = np.array(meta, dtype=np.float32)
+                    
+                # --- KODE DIAGNOSA MULAI ---
+                st.warning("🛠️ DIAGNOSA SISTEM:")
+                st.write("- Gambar mengandung NaN?", np.isnan(input_img).any())
+                st.write("- Metadata mengandung NaN?", np.isnan(input_meta).any())
+                
+                try:
+                    weights = model.get_weights()
+                    is_weights_nan = any(np.isnan(w).any() for w in weights)
+                    st.write("- Bobot Model mengandung NaN?", is_weights_nan)
+                except Exception as e:
+                    st.write("- Gagal membaca bobot:", e)
+                # --- KODE DIAGNOSA SELESAI ---
+
+                # SOLUSI: Konversi ke tf.Tensor sebelum dimasukkan ke model
+                tensor_img = tf.convert_to_tensor(input_img, dtype=tf.float32)
+                tensor_meta = tf.convert_to_tensor(input_meta, dtype=tf.float32)
+
+                pred = model.predict([tensor_img, tensor_meta], verbose=0)
+                
             # =================================
             
             idx = np.argmax(pred[0])
