@@ -68,36 +68,37 @@ META_PATH = os.path.join(BASE_PATH, "meta_cols.npy")
 # ======================
 
 def load_model_and_data():
-    """Load model menggunakan session_state agar aman dari NaN di Cloud"""
+    """Load model dan injeksi bobot secara manual untuk menghindari NaN di Linux"""
     
-    # 1. Load model ke session_state jika belum ada
+    WEIGHTS_PATH = os.path.join(BASE_PATH, "bobot_sehat.weights.h5")
+    
     if "cnn_model" not in st.session_state:
-        if os.path.exists(MODEL_PATH):
+        if os.path.exists(MODEL_PATH) and os.path.exists(WEIGHTS_PATH):
             try:
-                st.session_state.cnn_model = keras.models.load_model(MODEL_PATH, compile=False)
-                st.sidebar.success("✅ Model berhasil dimuat!")
+                # 1. Load kerangka model (biarkan jika bobot awalnya NaN)
+                model = keras.models.load_model(MODEL_PATH, compile=False)
+                
+                # 2. INJEKSI BOBOT YANG SEHAT
+                model.load_weights(WEIGHTS_PATH)
+                
+                st.session_state.cnn_model = model
+                st.sidebar.success("✅ Model & Bobot berhasil diinjeksi!")
             except Exception as e:
-                st.error(f"❌ Gagal memuat model: {e}")
+                st.error(f"❌ Gagal memuat model/bobot: {e}")
                 return None, None, None
         else:
-            st.error(f"❌ File model tidak ditemukan di: {MODEL_PATH}")
+            st.error("❌ File model atau bobot_sehat.weights.h5 tidak ditemukan!")
             return None, None, None
 
-    # 2. Load class names ke session_state
+    # Load class names
     if "class_names" not in st.session_state:
         if os.path.exists(CLASS_PATH):
             st.session_state.class_names = np.load(CLASS_PATH, allow_pickle=True)
-        else:
-            st.error(f"❌ File class_names tidak ditemukan di: {CLASS_PATH}")
-            return None, None, None
 
-    # 3. Load meta_cols ke session_state
+    # Load meta_cols
     if "meta_cols" not in st.session_state:
         if os.path.exists(META_PATH):
             st.session_state.meta_cols = list(np.load(META_PATH, allow_pickle=True))
-        else:
-            st.error(f"❌ File meta_cols tidak ditemukan di: {META_PATH}")
-            return None, None, None
     
     return st.session_state.cnn_model, st.session_state.class_names, st.session_state.meta_cols
 
