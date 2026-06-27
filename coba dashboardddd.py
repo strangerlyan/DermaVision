@@ -16,7 +16,7 @@ from tensorflow.keras.applications.efficientnet import preprocess_input
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # Path logo
-LOGO_PATH = os.path.join(BASE_PATH, "logo fix.png")
+LOGO_PATH = os.path.join(BASE_PATH, "logo fix.PNG")
 
 # Cek logo
 def is_logo_valid():
