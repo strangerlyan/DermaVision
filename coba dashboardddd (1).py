@@ -59,7 +59,7 @@ except Exception:
 # ======================
 # PATH FILE (SESUAI FOLDER ANDA)
 # ======================
-MODEL_PATH = os.path.join(BASE_PATH, "cnn_ham10000_final2.keras")
+MODEL_PATH = os.path.join(BASE_PATH, "cnn_ham10000_final.keras")
 CLASS_PATH = os.path.join(BASE_PATH, "class_names.npy")
 META_PATH = os.path.join(BASE_PATH, "meta_cols.npy")
 
