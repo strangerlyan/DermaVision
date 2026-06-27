@@ -67,37 +67,39 @@ META_PATH = os.path.join(BASE_PATH, "meta_cols.npy")
 # LOAD MODEL
 # ======================
 
-@st.cache_resource
 def load_model_and_data():
-    """Load model, class names, dan meta_cols dengan cache"""
+    """Load model menggunakan session_state agar aman dari NaN di Cloud"""
     
-    # Load model
-    if os.path.exists(MODEL_PATH):
-        try:
-            model = keras.models.load_model(MODEL_PATH, compile = False)
-            st.sidebar.success("✅ Model berhasil dimuat dari .keras!")
-        except Exception as e:
-            st.error(f"❌ Gagal memuat model: {e}")
+    # 1. Load model ke session_state jika belum ada
+    if "cnn_model" not in st.session_state:
+        if os.path.exists(MODEL_PATH):
+            try:
+                st.session_state.cnn_model = keras.models.load_model(MODEL_PATH, compile=False)
+                st.sidebar.success("✅ Model berhasil dimuat!")
+            except Exception as e:
+                st.error(f"❌ Gagal memuat model: {e}")
+                return None, None, None
+        else:
+            st.error(f"❌ File model tidak ditemukan di: {MODEL_PATH}")
             return None, None, None
-    else:
-        st.error(f"❌ File model tidak ditemukan di: {MODEL_PATH}")
-        return None, None, None
+
+    # 2. Load class names ke session_state
+    if "class_names" not in st.session_state:
+        if os.path.exists(CLASS_PATH):
+            st.session_state.class_names = np.load(CLASS_PATH, allow_pickle=True)
+        else:
+            st.error(f"❌ File class_names tidak ditemukan di: {CLASS_PATH}")
+            return None, None, None
+
+    # 3. Load meta_cols ke session_state
+    if "meta_cols" not in st.session_state:
+        if os.path.exists(META_PATH):
+            st.session_state.meta_cols = list(np.load(META_PATH, allow_pickle=True))
+        else:
+            st.error(f"❌ File meta_cols tidak ditemukan di: {META_PATH}")
+            return None, None, None
     
-    # Load class names
-    if os.path.exists(CLASS_PATH):
-        class_names = np.load(CLASS_PATH, allow_pickle=True)
-    else:
-        st.error(f"❌ File class_names tidak ditemukan di: {CLASS_PATH}")
-        return None, None, None
-    
-    # Load meta_cols
-    if os.path.exists(META_PATH):
-        meta_cols = list(np.load(META_PATH, allow_pickle=True))
-    else:
-        st.error(f"❌ File meta_cols tidak ditemukan di: {META_PATH}")
-        return None, None, None
-    
-    return model, class_names, meta_cols
+    return st.session_state.cnn_model, st.session_state.class_names, st.session_state.meta_cols
 
 # ======================
 # PREPROCESS
