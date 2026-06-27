@@ -103,12 +103,22 @@ def load_model_and_data():
 # PREPROCESS
 # ======================
 
+#def preprocess(img):
+   # img = img.convert("RGB")
+   ## img = img.resize((224, 224))
+   # img = np.array(img)
+   # img = np.expand_dims(img, 0)
+   # img = preprocess_input(img.astype("float32"))
+   ## return img
+
 def preprocess(img):
     img = img.convert("RGB")
     img = img.resize((224, 224))
     img = np.array(img)
+    img = img.astype("float32")
     img = np.expand_dims(img, 0)
-    img = preprocess_input(img.astype("float32"))
+    img = preprocess_input(img)
+    img = np.nan_to_num(img, nan=0.0, posinf=255.0, neginf=-255.0)
     return img
 
 # ======================
