@@ -9,6 +9,20 @@ from PIL import Image
 
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
+import sys
+import tensorflow as tf
+import keras
+import numpy as np
+import h5py
+import google.protobuf
+
+st.write("Python:", sys.version)
+st.write("TensorFlow:", tf.__version__)
+st.write("Keras:", keras.__version__)
+st.write("NumPy:", np.__version__)
+st.write("h5py:", h5py.__version__)
+st.write("protobuf:", google.protobuf.__version__)
+
 # ======================
 # KONFIGURASI HALAMAN
 # ======================
