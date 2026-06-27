@@ -86,6 +86,7 @@ def load_model_and_data():
     # Load class names
     if os.path.exists(CLASS_PATH):
         class_names = np.load(CLASS_PATH, allow_pickle=True)
+        st.sidebar.success("✅ kelas berhasil dimuat dari .keras!")
     else:
         st.error(f"❌ File class_names tidak ditemukan di: {CLASS_PATH}")
         return None, None, None
@@ -93,6 +94,7 @@ def load_model_and_data():
     # Load meta_cols
     if os.path.exists(META_PATH):
         meta_cols = list(np.load(META_PATH, allow_pickle=True))
+        st.sidebar.success("✅ metadata berhasil dimuat dari .keras!")
     else:
         st.error(f"❌ File meta_cols tidak ditemukan di: {META_PATH}")
         return None, None, None
