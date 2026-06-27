@@ -1,4 +1,5 @@
 *.keras binary
+*.h5 binary
 *.npy binary
 *.png binary
 *.jpg binary
