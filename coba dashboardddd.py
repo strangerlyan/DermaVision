@@ -126,9 +126,9 @@ def preprocess(img):
 # ======================
 
 def build_metadata(age, sex, localization, meta_cols):
-    meta = np.zeros((1, len(meta_cols)))
+    meta = np.zeros((1, len(meta_cols)), dtype = "float32")
     
-    meta[0, 0] = age
+    meta[0, 0] = float(age)
     
     if sex == "Laki-laki":
         meta[0, 1] = 0
